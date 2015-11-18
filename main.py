@@ -211,8 +211,10 @@ class Combat:
         for pc in self.pcs:
             if pc.hp > 0: dmg.append(1.0 / pc.unit.lv)
             else: dmg.append(0)
-        s = 1.0 / sum(dmg)
-        for i in range(len(dmg)): dmg[i] = dmg[i] * s
+        s = sum(dmg)
+        if s > 0.0: 
+            s = 1.0 / s
+            for i in range(len(dmg)): dmg[i] = dmg[i] * s
         return dmg
 
     def tick(self):
@@ -557,9 +559,18 @@ class MainFrame(wx.Frame):
         else:
             view.npcrow.status.Hide()
 
+        w = combat.getDamageWeights()
         for i in range(len(combat.pcs)):
             view.pcrows[i].statText.SetLabel("ATT: %d RCV: %d" % (combat.pcs[i].att, combat.pcs[i].rcv))
+
+            if combat.pcs[i].defn and combat.pcs[i].rcv >= w[i] * combat.npc.att and combat.pcs[i].hp > 0:
+                view.pcrows[i].healthText.SetForegroundColour(wx.Colour(0, 0, 192))
+            elif combat.pcs[i].hp <= w[i] * combat.npc.att * 10  or combat.pcs[i].hp <= 0:
+                view.pcrows[i].healthText.SetForegroundColour(wx.Colour(192, 0, 0))
+            else:
+                view.pcrows[i].healthText.SetForegroundColour(wx.Colour(0, 128, 0))
             view.pcrows[i].healthText.SetLabel("%d / %d" % (Combat.displayHP(combat.pcs[i].hp), Combat.displayHP(combat.pcs[i].maxhp)))
+
             if combat.pcs[i].init >= 90:
                 view.pcrows[i].initText.SetForegroundColour(wx.Colour(255, 0, 0))
             elif combat.pcs[i].readySP():
