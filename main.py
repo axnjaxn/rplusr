@@ -780,7 +780,7 @@ class MainFrame(wx.Frame):
         for ind in inds[1:]:
             src = self.roster.entries[ind][0]
             if src.canBolster(target): 
-                success = success or src.bolster(target)
+                success = src.bolster(target) or success
                 toRemove.append(ind)
 
         if success:
