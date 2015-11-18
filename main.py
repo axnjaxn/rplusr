@@ -127,7 +127,7 @@ class PCunit:
     def canBolster(self, unit):
         if self.spid != unit.spid or unit.sp.bonus >= 30 or self.lv < 5: return False
         elif self.sp.getStars() >= unit.sp.getStars(): return True
-        else: return self.sp.getStars() == unit.sp.getStars() - 1 and self.sp.bonus > 1
+        else: return self.sp.getStars() == unit.sp.getStars() - 1 and self.sp.bonus >= 1
 
     # Returns True if bolstering raises level
     def bolster(self, unit):
