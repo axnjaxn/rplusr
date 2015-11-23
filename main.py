@@ -247,6 +247,12 @@ class Combat:
             if self.pcs[i].defn:
                 received = max(received - self.pcs[i].rcv, 0)
             self.pcs[i].hp = self.pcs[i].hp - received
+            
+            if self.pcs[i].hp <= 0 and self.pcs[i].undying:
+                self.pcs[i].undying = False
+                self.pcs[i].tags.discard("Undying")
+                self.pcs[i].hp = 60 * self.pcs[i].unit.hp
+                self.pcs[i].init = 30
 
     def heal(self, ind):
         power = min(self.pcs[ind].init - 30, 60)
@@ -396,15 +402,9 @@ class Roster:
     def resolveCombat(self, combat):
         for pc in combat.pcs:
             if pc.hp > 0:
-                if combat.npc.hp <= 0:
-                    self.setState(pc.unit, Roster.RETURNED)
-                else:
-                    self.setState(pc.unit, Roster.IDLE)
-            else: 
-                if pc.undying:
-                    self.setState(pc.unit, Roster.IDLE)
-                else:
-                    self.setState(pc.unit, Roster.DEAD)
+                if combat.npc.hp <= 0: self.setState(pc.unit, Roster.RETURNED)
+                else: self.setState(pc.unit, Roster.IDLE)
+            else: self.setState(pc.unit, Roster.DEAD)
 
     def completeUnits(self, deathCallback = None, successCallback = None, levelCallback = None):
         for entry in self.entries:

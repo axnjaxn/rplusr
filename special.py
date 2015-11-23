@@ -98,6 +98,7 @@ def doRaise(sp, combat, ind):
     if len(candidates) > 0:
         pc = random.choice(candidates)
         pc.hp = min(int(60 * combat.pcs[ind].rcv * sp.multiplier() + 0.5), pc.maxhp)
+        pc.init = 30
 
 def doUndying(sp, combat, ind):
     combat.pcs[ind].undying = True
@@ -163,8 +164,7 @@ allSpecials = [
             textFn = lambda sp: "Unit is not lost, even if defeated in combat",
             callback = doUndying,
             series = 1,
-            stars = 5,
-            once = True),
+            stars = 5),
     Special("Mantra",
             summary = "Raises initiative rate",
             textFn = lambda sp: "+%s to initiative rate" % (sp.boostName()),
